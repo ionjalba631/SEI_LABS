@@ -1,15 +1,15 @@
 #include "ctrlStdio.h"
 
 /*
- * ctrlStdio – Simplified STDIO bridge using only Serial
- * 
+ * ctrlStdio - Simplified STDIO bridge using only Serial
+ *
  * Redirects stdout to Serial (UART0) for debug output.
  * Uses avr-libc's fdev_setup_stream() to bind a callback to a
  * FILE object that becomes stdout.
  */
 
 /* ------------------------------------------------------------------ */
-/*  stdout callback – one character at a time to Serial               */
+/*  stdout callback - one character at a time to Serial               */
 /* ------------------------------------------------------------------ */
 static int serialPutchar(char c, FILE *stream) {
     (void)stream;
@@ -26,7 +26,7 @@ static int serialPutchar(char c, FILE *stream) {
 static FILE serial_stream;
 
 /* ------------------------------------------------------------------ */
-/*  Public API                                                           */
+/*  Public API                                                         */
 /* ------------------------------------------------------------------ */
 
 void ctrlStdioInit(void) {

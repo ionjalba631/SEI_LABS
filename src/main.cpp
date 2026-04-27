@@ -19,7 +19,7 @@ static const uint32_t TASK1_OFFSET_MS = 0;
 static const uint32_t TASK2_OFFSET_MS = 5;
 static const uint32_t TASK3_OFFSET_MS = 10;
 
-static const uint32_t IDLE_DELAY_MS    = 5;
+static const uint32_t IDLE_DELAY_MS = 5;
 
 static const int MIN_LED2_RECURRENCES     = 1;
 static const int MAX_LED2_RECURRENCES     = 10;
@@ -38,12 +38,12 @@ static DdButton gButtonDecrement;
 static DdLed gLed1;
 static DdLed gLed2;
 
-static bool gLed1Enabled                = false;
-static bool gLed2Enabled                = false;
-static uint8_t gLed2StateRecurrences    = 0;
-static int gLed2RecurrenceTarget        = DEFAULT_LED2_RECURRENCES;
-static bool gStateChangedForReport      = true;
-static uint32_t gSchedulerStartMs       = 0;
+static bool gLed1Enabled             = false;
+static bool gLed2Enabled             = false;
+static uint8_t gLed2StateRecurrences = 0;
+static int gLed2RecurrenceTarget     = DEFAULT_LED2_RECURRENCES;
+static bool gStateChangedForReport   = true;
+static uint32_t gSchedulerStartMs    = 0;
 
 static TaskSchedule gTask1Schedule = {TASK1_PERIOD_MS, TASK1_OFFSET_MS, 0, false};
 static TaskSchedule gTask2Schedule = {TASK2_PERIOD_MS, TASK2_OFFSET_MS, 0, false};
@@ -131,8 +131,8 @@ static void runTask1ButtonLed(void) {
         gLed1Enabled = !gLed1Enabled;
 
         if (gLed1Enabled) {
-            gLed2Enabled             = false;
-            gLed2StateRecurrences    = 0;
+            gLed2Enabled = false;
+            gLed2StateRecurrences = 0;
         }
 
         requestReport();
@@ -143,7 +143,7 @@ static void runTask1ButtonLed(void) {
 static void runTask2BlinkingLed(void) {
     if (gLed1Enabled) {
         if (gLed2Enabled) {
-            gLed2Enabled          = false;
+            gLed2Enabled = false;
             gLed2StateRecurrences = 0;
             requestReport();
             syncLedHardware();

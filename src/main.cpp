@@ -1,210 +1,117 @@
 #include <Arduino.h>
+#include <Arduino_FreeRTOS.h>
 #include <stdio.h>
 
-#include "ctrlStdio.h"
-#include "ddButton.h"
-#include "ddLed.h"
 
-static const uint8_t BUTTON_LED_TOGGLE_PIN = 2;
-static const uint8_t BUTTON_INCREMENT_PIN  = 3;
-static const uint8_t BUTTON_DECREMENT_PIN  = 4;
-static const uint8_t LED1_PIN              = 12;
-static const uint8_t LED2_PIN              = 11;
+#include "ddLcd.h"
+#include "joystick_driver.h"
+#include "system_signals.h"
 
-static const uint32_t TASK1_PERIOD_MS = 20;
-static const uint32_t TASK2_PERIOD_MS = 100;
-static const uint32_t TASK3_PERIOD_MS = 20;
+namespace {
 
-static const uint32_t TASK1_OFFSET_MS = 0;
-static const uint32_t TASK2_OFFSET_MS = 5;
-static const uint32_t TASK3_OFFSET_MS = 10;
+constexpr TickType_t ACQUISITION_PERIOD_TICKS = pdMS_TO_TICKS(100);
+constexpr TickType_t DISPLAY_PERIOD_TICKS = pdMS_TO_TICKS(500);
+constexpr TickType_t DISPLAY_START_OFFSET_TICKS = pdMS_TO_TICKS(50);
 
-static const uint32_t IDLE_DELAY_MS = 5;
+#ifdef ARDUINO_ARCH_AVR
+int serial_putchar(char character, FILE *stream) {
+    (void)stream;
 
-static const int MIN_LED2_RECURRENCES     = 1;
-static const int MAX_LED2_RECURRENCES     = 10;
-static const int DEFAULT_LED2_RECURRENCES = 3;
+    if (character == '\n') {
+        Serial.write('\r');
+    }
 
-typedef struct {
-    uint32_t periodMs;
-    uint32_t offsetMs;
-    uint32_t lastReleaseMs;
-    bool started;
-} TaskSchedule;
+    Serial.write(character);
+    return 0;
+}
 
-static DdButton gButtonLedToggle;
-static DdButton gButtonIncrement;
-static DdButton gButtonDecrement;
-static DdLed gLed1;
-static DdLed gLed2;
+FILE serial_stdout;
+#endif
 
-static bool gLed1Enabled             = false;
-static bool gLed2Enabled             = false;
-static uint8_t gLed2StateRecurrences = 0;
-static int gLed2RecurrenceTarget     = DEFAULT_LED2_RECURRENCES;
-static bool gStateChangedForReport   = true;
-static uint32_t gSchedulerStartMs    = 0;
+void lcd_print_fixed_row(uint8_t row, const char *text) {
+    ddLcdSetCursor(0, row);
+    ddLcdPrint(text);
+}
 
-static TaskSchedule gTask1Schedule = {TASK1_PERIOD_MS, TASK1_OFFSET_MS, 0, false};
-static TaskSchedule gTask2Schedule = {TASK2_PERIOD_MS, TASK2_OFFSET_MS, 0, false};
-static TaskSchedule gTask3Schedule = {TASK3_PERIOD_MS, TASK3_OFFSET_MS, 0, false};
+void acquisition_task(void *parameters) {
+    (void)parameters;
 
-static bool shouldRunTask(TaskSchedule *schedule, uint32_t nowMs);
-static void runTask1ButtonLed(void);
-static void runTask2BlinkingLed(void);
-static void runTask3StateVariable(void);
-static void runIdleReporter(void);
-static void syncLedHardware(void);
-static void requestReport(void);
+    TickType_t last_wake_time = xTaskGetTickCount();
+
+    for (;;) {
+        system_update_state();
+        vTaskDelayUntil(&last_wake_time, ACQUISITION_PERIOD_TICKS);
+    }
+}
+
+void display_task(void *parameters) {
+    (void)parameters;
+
+    vTaskDelay(DISPLAY_START_OFFSET_TICKS);
+
+    for (;;) {
+        const system_state_t state = system_get_state();
+        char lcd_row_0[DD_LCD_COLS + 1];
+        char lcd_row_1[DD_LCD_COLS + 1];
+
+        printf(
+            "\rX: %4d%% | Y: %4d%% | Button: %-8s | Error: %-3s      ",
+            state.x,
+            state.y,
+            state.button_pressed ? "PRESSED" : "RELEASED",
+            state.error ? "YES" : "NO"
+        );
+
+        snprintf(lcd_row_0, sizeof(lcd_row_0), "X:%4d Y:%4d   ", state.x, state.y);
+        snprintf(
+            lcd_row_1,
+            sizeof(lcd_row_1),
+            "B:%-3s E:%-3s   ",
+            state.button_pressed ? "YES" : "NO",
+            state.error ? "YES" : "NO"
+        );
+
+        lcd_print_fixed_row(0, lcd_row_0);
+        lcd_print_fixed_row(1, lcd_row_1);
+
+        vTaskDelay(DISPLAY_PERIOD_TICKS);
+    }
+}
+
+}  // namespace
 
 void setup() {
-    ctrlStdioInit();
+    Serial.begin(115200);
 
-    ddButtonInit(&gButtonLedToggle, BUTTON_LED_TOGGLE_PIN);
-    ddButtonInit(&gButtonIncrement, BUTTON_INCREMENT_PIN);
-    ddButtonInit(&gButtonDecrement, BUTTON_DECREMENT_PIN);
-    ddLedInit(&gLed1, LED1_PIN);
-    ddLedInit(&gLed2, LED2_PIN);
+#ifdef ARDUINO_ARCH_AVR
+    fdev_setup_stream(&serial_stdout, serial_putchar, nullptr, _FDEV_SETUP_WRITE);
+    stdout = &serial_stdout;
+#endif
 
-    gSchedulerStartMs = millis();
+    ddLcdInit();
+    ddLcdClear();
+    joystick_init();
+    system_update_state();
 
-    printf("\nSequential MCU scheduler ready\n");
-    printf("BTN toggle=%u, BTN inc=%u, BTN dec=%u, LED1=%u, LED2=%u\n",
-           BUTTON_LED_TOGGLE_PIN,
-           BUTTON_INCREMENT_PIN,
-           BUTTON_DECREMENT_PIN,
-           LED1_PIN,
-           LED2_PIN);
-    requestReport();
+    xTaskCreate(
+        acquisition_task,
+        "Acquire",
+        256,
+        nullptr,
+        2,
+        nullptr
+    );
+
+    xTaskCreate(
+        display_task,
+        "Display",
+        256,
+        nullptr,
+        1,
+        nullptr
+    );
 }
 
 void loop() {
-    const uint32_t nowMs = millis();
-
-    if (shouldRunTask(&gTask1Schedule, nowMs)) {
-        runTask1ButtonLed();
-    }
-
-    if (shouldRunTask(&gTask2Schedule, nowMs)) {
-        runTask2BlinkingLed();
-    }
-
-    if (shouldRunTask(&gTask3Schedule, nowMs)) {
-        runTask3StateVariable();
-    }
-
-    runIdleReporter();
-}
-
-static bool shouldRunTask(TaskSchedule *schedule, uint32_t nowMs) {
-    if (schedule == NULL) {
-        return false;
-    }
-
-    if ((nowMs - gSchedulerStartMs) < schedule->offsetMs) {
-        return false;
-    }
-
-    if (!schedule->started) {
-        schedule->started = true;
-        schedule->lastReleaseMs = nowMs;
-        return true;
-    }
-
-    if ((nowMs - schedule->lastReleaseMs) >= schedule->periodMs) {
-        schedule->lastReleaseMs += schedule->periodMs;
-
-        if ((nowMs - schedule->lastReleaseMs) >= schedule->periodMs) {
-            schedule->lastReleaseMs = nowMs;
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-static void runTask1ButtonLed(void) {
-    ddButtonUpdate(&gButtonLedToggle);
-
-    if (ddButtonWasPressed(&gButtonLedToggle) != 0U) {
-        gLed1Enabled = !gLed1Enabled;
-
-        if (gLed1Enabled) {
-            gLed2Enabled = false;
-            gLed2StateRecurrences = 0;
-        }
-
-        requestReport();
-        syncLedHardware();
-    }
-}
-
-static void runTask2BlinkingLed(void) {
-    if (gLed1Enabled) {
-        if (gLed2Enabled) {
-            gLed2Enabled = false;
-            gLed2StateRecurrences = 0;
-            requestReport();
-            syncLedHardware();
-        }
-        return;
-    }
-
-    gLed2StateRecurrences++;
-
-    if (gLed2StateRecurrences >= (uint8_t)gLed2RecurrenceTarget) {
-        gLed2StateRecurrences = 0;
-        gLed2Enabled = !gLed2Enabled;
-        syncLedHardware();
-    }
-}
-
-static void runTask3StateVariable(void) {
-    ddButtonUpdate(&gButtonIncrement);
-    ddButtonUpdate(&gButtonDecrement);
-
-    if (ddButtonWasPressed(&gButtonIncrement) != 0U &&
-        gLed2RecurrenceTarget < MAX_LED2_RECURRENCES) {
-        gLed2RecurrenceTarget++;
-        requestReport();
-    }
-
-    if (ddButtonWasPressed(&gButtonDecrement) != 0U &&
-        gLed2RecurrenceTarget > MIN_LED2_RECURRENCES) {
-        gLed2RecurrenceTarget--;
-        requestReport();
-    }
-}
-
-static void runIdleReporter(void) {
-    if (gStateChangedForReport) {
-        gStateChangedForReport = false;
-
-        printf("[IDLE] LED1=%s | LED2=%s | RecurrenceTarget=%d | CurrentRecurrence=%u\n",
-               gLed1Enabled ? "ON " : "OFF",
-               gLed2Enabled ? "ON " : "OFF",
-               gLed2RecurrenceTarget,
-               gLed2StateRecurrences);
-    }
-
-    delay(IDLE_DELAY_MS);
-}
-
-static void requestReport(void) {
-    gStateChangedForReport = true;
-}
-
-static void syncLedHardware(void) {
-    if (gLed1Enabled) {
-        ddLedOn(&gLed1);
-    } else {
-        ddLedOff(&gLed1);
-    }
-
-    if (gLed2Enabled) {
-        ddLedOn(&gLed2);
-    } else {
-        ddLedOff(&gLed2);
-    }
+    // FreeRTOS preia executia task-urilor; loop ramane gol.
 }

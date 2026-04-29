@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "author": "Ion Jalba",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-mega", "id": "mega", "top": 29.4, "left": -22.8, "attrs": {} },
+    { "type": "wokwi-lcd1602", "id": "lcd1", "top": -265.37, "left": -41.6, "attrs": {} },
+    {
+      "type": "wokwi-membrane-keypad",
+      "id": "keypad1",
+      "top": -357.2,
+      "left": 447.2,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -80.4,
+      "left": 186.2,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": -70.8,
+      "left": 272.6,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": -15.25,
+      "left": 211.2,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": -24.85,
+      "left": 297.6,
+      "attrs": { "value": "220" }
+    }
+  ],
+  "connections": [
+    [ "lcd1:VSS", "mega:GND.1", "green", [ "v67.2", "h-9.6" ] ],
+    [ "lcd1:VDD", "mega:5V", "green", [ "v86.4", "h-67.1", "v288", "h182.4" ] ],
+    [ "lcd1:RW", "mega:GND.1", "green", [ "v134.4", "h28.7" ] ],
+    [ "lcd1:A", "mega:5V", "green", [ "v19.2", "h-163.3", "v336", "h-19.2" ] ],
+    [ "lcd1:K", "mega:GND.1", "green", [ "v38.4", "h-76.8", "v105.6", "h19.4" ] ],
+    [ "mega:10", "r1:2", "green", [ "v-19.2", "h-0.3" ] ],
+    [ "r1:1", "led1:A", "green", [ "v0" ] ],
+    [ "led1:C", "mega:GND.1", "green", [ "v28.8", "h-105.2" ] ],
+    [ "mega:11", "r2:2", "green", [ "v-28.8", "h278" ] ],
+    [ "r2:1", "led2:A", "green", [ "v0" ] ],
+    [ "led2:C", "mega:GND.1", "green", [ "v9.6", "h-191.4" ] ],
+    [ "lcd1:RS", "mega:25", "green", [ "v38.4", "h384.3", "v152.65" ] ],
+    [ "lcd1:E", "mega:27", "green", [ "v28.8", "h374.4", "v163.2" ] ],
+    [ "lcd1:D4", "mega:29", "green", [ "v19.2", "h0", "v28.8", "h307.2", "v163.2" ] ],
+    [ "lcd1:D5", "mega:31", "green", [ "v57.6", "h278.5", "v19.2" ] ],
+    [ "lcd1:D6", "mega:33", "green", [ "v19.2", "h317", "v192" ] ],
+    [ "lcd1:D7", "mega:35", "green", [ "v9.6", "h317.1", "v230.4" ] ],
+    [ "keypad1:R1", "mega:22", "green", [ "v0" ] ],
+    [ "keypad1:R2", "mega:23", "green", [ "v0" ] ],
+    [ "keypad1:R3", "mega:24", "green", [ "v0" ] ],
+    [ "keypad1:R4", "mega:26", "green", [ "v0" ] ],
+    [ "keypad1:C1", "mega:28", "green", [ "v0" ] ],
+    [ "keypad1:C2", "mega:30", "green", [ "v0" ] ],
+    [ "keypad1:C3", "mega:32", "green", [ "v0" ] ],
+    [ "keypad1:C4", "mega:34", "green", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}

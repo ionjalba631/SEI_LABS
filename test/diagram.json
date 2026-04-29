@@ -3,6 +3,7 @@
   "author": "Ion Jalba",
   "editor": "wokwi",
   "parts": [
+<<<<<<< HEAD
     { "type": "wokwi-arduino-mega", "id": "mega", "top": 59.4, "left": -29.4, "attrs": {} },
     {
       "type": "wokwi-analog-joystick",
@@ -12,12 +13,23 @@
       "attrs": {}
     },
     { "type": "wokwi-lcd1602", "id": "lcd1", "top": -184, "left": 375.2, "attrs": {} }
+=======
+    { "type": "wokwi-arduino-mega", "id": "mega", "top": -9, "left": -32.4, "attrs": {} },
+    {
+      "type": "wokwi-analog-joystick",
+      "id": "joystick1",
+      "top": -211.8,
+      "left": 72.6,
+      "attrs": {}
+    }
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
   ],
   "connections": [
     [ "joystick1:VCC", "mega:5V", "red", [ "v67.2", "h-192", "v288", "h220.8", "v-83.7" ] ],
     [ "joystick1:GND", "mega:GND.1", "black", [ "v57.6", "h-19.2" ] ],
     [ "mega:A0", "joystick1:VERT", "green", [ "v35.7", "h217.5", "v-288", "h-278.4" ] ],
     [ "joystick1:HORZ", "mega:A1", "green", [ "v48", "h288", "v249.6", "h-227.2" ] ],
+<<<<<<< HEAD
     [ "mega:2", "joystick1:SEL", "green", [ "v-67.2", "h-71.2" ] ],
 
     [ "lcd1:VSS", "mega:GND.2", "black", [ "h-19.2", "v259.2", "h-355.2" ] ],
@@ -36,3 +48,9 @@
   ],
   "dependencies": {}
 }
+=======
+    [ "mega:2", "joystick1:SEL", "green", [ "v-67.2", "h-71.2" ] ]
+  ],
+  "dependencies": {}
+}
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788

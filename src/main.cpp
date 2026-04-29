@@ -2,15 +2,25 @@
 #include <Arduino_FreeRTOS.h>
 #include <stdio.h>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
 #include "ddLcd.h"
 #include "joystick_driver.h"
 #include "system_signals.h"
 
 namespace {
 
+<<<<<<< HEAD
 constexpr TickType_t ACQUISITION_PERIOD_TICKS = pdMS_TO_TICKS(50);
 constexpr TickType_t DISPLAY_PERIOD_TICKS = pdMS_TO_TICKS(500);
 constexpr TickType_t DISPLAY_START_OFFSET_TICKS = pdMS_TO_TICKS(25);
+=======
+constexpr TickType_t ACQUISITION_PERIOD_TICKS = pdMS_TO_TICKS(100);
+constexpr TickType_t DISPLAY_PERIOD_TICKS = pdMS_TO_TICKS(500);
+constexpr TickType_t DISPLAY_START_OFFSET_TICKS = pdMS_TO_TICKS(50);
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
 
 #ifdef ARDUINO_ARCH_AVR
 int serial_putchar(char character, FILE *stream) {
@@ -27,6 +37,7 @@ int serial_putchar(char character, FILE *stream) {
 FILE serial_stdout;
 #endif
 
+<<<<<<< HEAD
 void lcd_print_fixed_row(const uint8_t row, const char *text) {
     char padded_row[DD_LCD_COLS + 1];
     snprintf(padded_row, sizeof(padded_row), "%-16.16s", text);
@@ -77,6 +88,11 @@ void lcd_show_adc_page(const system_state_t &state) {
 
     lcd_print_fixed_row(0, lcd_row_0);
     lcd_print_fixed_row(1, lcd_row_1);
+=======
+void lcd_print_fixed_row(uint8_t row, const char *text) {
+    ddLcdSetCursor(0, row);
+    ddLcdPrint(text);
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
 }
 
 void acquisition_task(void *parameters) {
@@ -95,6 +111,7 @@ void display_task(void *parameters) {
 
     vTaskDelay(DISPLAY_START_OFFSET_TICKS);
 
+<<<<<<< HEAD
     TickType_t last_wake_time = xTaskGetTickCount();
     uint8_t lcd_page = 0;
 
@@ -115,10 +132,22 @@ void display_task(void *parameters) {
             state.y.weighted_filtered_adc,
             state.y.voltage_mv,
             state.y.position_percent,
+=======
+    for (;;) {
+        const system_state_t state = system_get_state();
+        char lcd_row_0[DD_LCD_COLS + 1];
+        char lcd_row_1[DD_LCD_COLS + 1];
+
+        printf(
+            "\rX: %4d%% | Y: %4d%% | Button: %-8s | Error: %-3s      ",
+            state.x,
+            state.y,
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
             state.button_pressed ? "PRESSED" : "RELEASED",
             state.error ? "YES" : "NO"
         );
 
+<<<<<<< HEAD
         switch (lcd_page) {
             case 0:
                 lcd_show_position_page(state);
@@ -136,6 +165,21 @@ void display_task(void *parameters) {
         lcd_page = (lcd_page + 1U) % 3U;
 
         vTaskDelayUntil(&last_wake_time, DISPLAY_PERIOD_TICKS);
+=======
+        snprintf(lcd_row_0, sizeof(lcd_row_0), "X:%4d Y:%4d   ", state.x, state.y);
+        snprintf(
+            lcd_row_1,
+            sizeof(lcd_row_1),
+            "B:%-3s E:%-3s   ",
+            state.button_pressed ? "YES" : "NO",
+            state.error ? "YES" : "NO"
+        );
+
+        lcd_print_fixed_row(0, lcd_row_0);
+        lcd_print_fixed_row(1, lcd_row_1);
+
+        vTaskDelay(DISPLAY_PERIOD_TICKS);
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
     }
 }
 
@@ -151,10 +195,14 @@ void setup() {
 
     ddLcdInit();
     ddLcdClear();
+<<<<<<< HEAD
     lcd_print_fixed_row(0, "Joystick Monitor");
     lcd_print_fixed_row(1, "Init...");
     joystick_init();
     system_init();
+=======
+    joystick_init();
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
     system_update_state();
 
     xTaskCreate(
@@ -177,5 +225,9 @@ void setup() {
 }
 
 void loop() {
+<<<<<<< HEAD
     // Executia este preluata de schedulerul FreeRTOS.
+=======
+    // FreeRTOS preia executia task-urilor; loop ramane gol.
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
 }

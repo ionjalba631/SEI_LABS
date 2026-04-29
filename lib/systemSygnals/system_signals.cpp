@@ -7,6 +7,7 @@
 
 namespace {
 
+<<<<<<< HEAD
 constexpr uint16_t ADC_MIN = 0;
 constexpr uint16_t ADC_MAX = 1023;
 constexpr uint16_t VREF_MV = 5000;
@@ -29,6 +30,10 @@ system_state_t g_system_state = {};
 SemaphoreHandle_t g_state_mutex = nullptr;
 axis_filter_state_t g_x_filter = {};
 axis_filter_state_t g_y_filter = {};
+=======
+system_state_t g_system_state = {0, 0, false, false};
+SemaphoreHandle_t g_state_mutex = nullptr;
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
 
 void ensure_state_mutex() {
     if (g_state_mutex == nullptr) {
@@ -36,6 +41,7 @@ void ensure_state_mutex() {
     }
 }
 
+<<<<<<< HEAD
 uint16_t saturate_u16(const long value, const uint16_t min_value, const uint16_t max_value, bool &saturated) {
     if (value < min_value) {
         saturated = true;
@@ -150,10 +156,15 @@ axis_signal_t build_axis_state(axis_filter_state_t &filter_state, const int raw_
     axis_state.saturated = saturated;
 
     return axis_state;
+=======
+bool adc_value_invalid(const int value) {
+    return (value < 0) || (value > 1023);
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
 }
 
 }  // namespace
 
+<<<<<<< HEAD
 void system_init() {
     ensure_state_mutex();
 
@@ -172,6 +183,19 @@ void system_update_state() {
     next_state.y = build_axis_state(g_y_filter, joystick_read_y());
     next_state.button_pressed = joystick_read_button();
     next_state.error = next_state.x.saturated || next_state.y.saturated;
+=======
+void system_update_state() {
+    ensure_state_mutex();
+
+    const int raw_x = joystick_read_x();
+    const int raw_y = joystick_read_y();
+
+    system_state_t next_state;
+    next_state.x = joystick_get_x_percent();
+    next_state.y = joystick_get_y_percent();
+    next_state.button_pressed = joystick_read_button();
+    next_state.error = adc_value_invalid(raw_x) || adc_value_invalid(raw_y);
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
 
     if (g_state_mutex != nullptr &&
         xSemaphoreTake(g_state_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
@@ -183,8 +207,12 @@ void system_update_state() {
 system_state_t system_get_state() {
     ensure_state_mutex();
 
+<<<<<<< HEAD
     system_state_t current_state = {};
     current_state.error = true;
+=======
+    system_state_t current_state = {0, 0, false, true};
+>>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
 
     if (g_state_mutex != nullptr &&
         xSemaphoreTake(g_state_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {

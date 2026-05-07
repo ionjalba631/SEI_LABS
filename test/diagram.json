@@ -3,54 +3,55 @@
   "author": "Ion Jalba",
   "editor": "wokwi",
   "parts": [
-<<<<<<< HEAD
-    { "type": "wokwi-arduino-mega", "id": "mega", "top": 59.4, "left": -29.4, "attrs": {} },
-    {
-      "type": "wokwi-analog-joystick",
-      "id": "joystick1",
-      "top": -145.8,
-      "left": 73.8,
-      "attrs": {}
-    },
-    { "type": "wokwi-lcd1602", "id": "lcd1", "top": -184, "left": 375.2, "attrs": {} }
-=======
-    { "type": "wokwi-arduino-mega", "id": "mega", "top": -9, "left": -32.4, "attrs": {} },
-    {
-      "type": "wokwi-analog-joystick",
-      "id": "joystick1",
-      "top": -211.8,
-      "left": 72.6,
-      "attrs": {}
-    }
->>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788
+    { "type": "wokwi-arduino-mega", "id": "mega", "top": 36, "left": -35, "attrs": {} },
+    { "type": "wokwi-lcd1602", "id": "lcd1", "top": -247, "left": 392, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": -286, "left": 251, "attrs": { "value": "512" } },
+    { "type": "wokwi-membrane-keypad", "id": "keypad1", "top": -426, "left": 10, "attrs": {} },
+    { "type": "wokwi-l298n", "id": "l298", "top": 163, "left": 266, "attrs": {} },
+    { "type": "wokwi-dc-motor", "id": "motor1", "top": 149, "left": 548, "attrs": { "rpm": "90" } },
+    { "type": "wokwi-battery", "id": "bat1", "top": 319, "left": 503, "attrs": { "voltage": "12" } }
   ],
   "connections": [
-    [ "joystick1:VCC", "mega:5V", "red", [ "v67.2", "h-192", "v288", "h220.8", "v-83.7" ] ],
-    [ "joystick1:GND", "mega:GND.1", "black", [ "v57.6", "h-19.2" ] ],
-    [ "mega:A0", "joystick1:VERT", "green", [ "v35.7", "h217.5", "v-288", "h-278.4" ] ],
-    [ "joystick1:HORZ", "mega:A1", "green", [ "v48", "h288", "v249.6", "h-227.2" ] ],
-<<<<<<< HEAD
-    [ "mega:2", "joystick1:SEL", "green", [ "v-67.2", "h-71.2" ] ],
+    [ "lcd1:VSS", "mega:GND.2", "black", [ "v86.4", "h-20", "v262.9" ] ],
+    [ "lcd1:VDD", "mega:5V", "red", [ "v105.6", "h-30", "v243.7" ] ],
+    [ "lcd1:RW", "mega:GND.2", "black", [ "v153.6", "h-58", "v195.7" ] ],
+    [ "lcd1:A", "mega:5V", "red", [ "h58", "v288" ] ],
+    [ "lcd1:K", "mega:GND.2", "black", [ "h48", "v220" ] ],
+    [ "lcd1:RS", "mega:25", "blue", [ "h0.3", "v192.05" ] ],
+    [ "lcd1:E", "mega:27", "blue", [ "v201.55" ] ],
+    [ "lcd1:D4", "mega:29", "blue", [ "v211.05" ] ],
+    [ "lcd1:D5", "mega:31", "blue", [ "h0.1", "v220.8" ] ],
+    [ "lcd1:D6", "mega:33", "blue", [ "h0.2", "v230.3" ] ],
+    [ "lcd1:D7", "mega:35", "blue", [ "h0.3", "v239.8" ] ],
+    [ "pot1:VCC", "mega:5V", "red", [ "h-46", "v156", "h-212" ] ],
+    [ "pot1:GND", "mega:GND.2", "black", [ "v54", "h-176", "v278" ] ],
+    [ "pot1:SIG", "lcd1:V0", "orange", [ "h72", "v79" ] ],
 
-    [ "lcd1:VSS", "mega:GND.2", "black", [ "h-19.2", "v259.2", "h-355.2" ] ],
-    [ "lcd1:VDD", "mega:5V", "red", [ "h-28.8", "v278.4", "h-345.6" ] ],
-    [ "lcd1:VO", "mega:GND.2", "black", [ "h-38.4", "v249.6", "h-326.4" ] ],
-    [ "lcd1:RW", "mega:GND.2", "black", [ "h-57.6", "v230.4", "h-297.6" ] ],
-    [ "lcd1:A", "mega:5V", "red", [ "h57.6", "v288", "h-422.4" ] ],
-    [ "lcd1:K", "mega:GND.2", "black", [ "h48", "v220.8", "h-403.2" ] ],
+    [ "keypad1:R1", "mega:22", "green", [ "v76.8", "h225.8" ] ],
+    [ "keypad1:R2", "mega:23", "green", [ "h-0.4", "v67.2", "h226.2" ] ],
+    [ "keypad1:R3", "mega:24", "green", [ "h-0.3", "v57.6", "h206.6" ] ],
+    [ "keypad1:R4", "mega:26", "green", [ "v48", "h150", "v134.35" ] ],
+    [ "keypad1:C1", "mega:28", "orange", [ "v38.4", "h160", "v153.45" ] ],
+    [ "keypad1:C2", "mega:30", "orange", [ "v28.8", "h170", "v172.8" ] ],
+    [ "keypad1:C3", "mega:32", "orange", [ "v19.2", "h180", "v172.7" ] ],
+    [ "keypad1:C4", "mega:34", "orange", [ "v9.6", "h190", "v211" ] ],
 
-    [ "lcd1:RS", "mega:25", "blue", [ "h-67.2", "v201.6", "h-182.4", "v57.6" ] ],
-    [ "lcd1:E", "mega:27", "blue", [ "h-76.8", "v192", "h-163.2", "v57.6" ] ],
-    [ "lcd1:D4", "mega:29", "blue", [ "h-115.2", "v172.8", "h-115.2", "v57.6" ] ],
-    [ "lcd1:D5", "mega:31", "blue", [ "h-124.8", "v163.2", "h-96", "v57.6" ] ],
-    [ "lcd1:D6", "mega:33", "blue", [ "h-134.4", "v153.6", "h-76.8", "v57.6" ] ],
-    [ "lcd1:D7", "mega:35", "blue", [ "h-144", "v144", "h-57.6", "v57.6" ] ]
+    [ "mega:6", "l298:ENA", "purple", [ "h110", "v130" ] ],
+    [ "mega:8", "l298:IN1", "purple", [ "h125", "v122" ] ],
+    [ "mega:9", "l298:IN2", "purple", [ "h138", "v114" ] ],
+    [ "mega:5V", "l298:5V", "red", [ "v80", "h214", "v74" ] ],
+    [ "mega:GND.1", "l298:GND", "black", [ "v52", "h246", "v95" ] ],
+
+    [ "bat1:+", "l298:12V", "red", [ "h-62", "v-56" ] ],
+    [ "bat1:-", "l298:GND", "black", [ "h-78", "v-46" ] ],
+
+    [ "l298:OUT1", "motor1:1", "green", [ "h82", "v-10" ] ],
+    [ "l298:OUT2", "motor1:2", "green", [ "h87", "v8" ] ]
   ],
+  "serialMonitor": {
+    "display": "terminal",
+    "convertEol": true,
+    "newline": "lf"
+  },
   "dependencies": {}
 }
-=======
-    [ "mega:2", "joystick1:SEL", "green", [ "v-67.2", "h-71.2" ] ]
-  ],
-  "dependencies": {}
-}
->>>>>>> fb7ef7696920aa433f62f297ff3268df34ea7788

@@ -1,21 +1,43 @@
 #include "ctrlStdio.h"
 
-static int uartPutchar(char c, FILE *f) {
-    if (c == '\n') Serial.write('\r');
-    return Serial.write(c);
-}
+/*
+ * ctrlStdio – Simplified STDIO bridge using only Serial
+ * 
+ * Redirects stdout to Serial (UART0) for debug output.
+ * Uses avr-libc's fdev_setup_stream() to bind a callback to a
+ * FILE object that becomes stdout.
+ */
 
-static int uartGetchar(FILE *f) {
-    if (!Serial.available()) {
-        return _FDEV_EOF;
+/* ------------------------------------------------------------------ */
+/*  stdout callback – one character at a time to Serial               */
+/* ------------------------------------------------------------------ */
+static int serialPutchar(char c, FILE *stream) {
+    (void)stream;
+    if (c == '\n') {
+        Serial.write('\r');
     }
-    return Serial.read();
+    Serial.write(c);
+    return 0;
 }
 
-static FILE uart_io;
+/* ------------------------------------------------------------------ */
+/*  Single FILE object for stdout                                      */
+/* ------------------------------------------------------------------ */
+static FILE serial_stream;
 
-void ctrlStdioInit(unsigned long baud) {
-    Serial.begin(baud);
-    fdev_setup_stream(&uart_io, uartPutchar, uartGetchar, _FDEV_SETUP_RW);
-    stdout = stdin = &uart_io;
+/* ------------------------------------------------------------------ */
+/*  Public API                                                           */
+/* ------------------------------------------------------------------ */
+
+void ctrlStdioInit(void) {
+    /* Initialise UART */
+    Serial.begin(STDIO_UART_BAUD);
+
+    /* Bind callback and redirect stdout */
+    fdev_setup_stream(&serial_stream,
+                      serialPutchar,
+                      NULL,
+                      _FDEV_SETUP_WRITE);
+
+    stdout = &serial_stream;
 }

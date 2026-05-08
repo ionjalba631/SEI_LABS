@@ -4,8 +4,14 @@
 #include <Arduino.h>
 #include <stdio.h>
 
-#define UART_BAUD_RATE 9600
+/*
+ * ctrlStdio – Simplified STDIO bridge using only Serial
+ * 
+ * Redirects stdout to Serial (UART0) for debug output.
+ */
 
-void ctrlStdioInit(unsigned long baud);
+#define STDIO_UART_BAUD 9600UL
 
-#endif
+void ctrlStdioInit(void);
+
+#endif /* CTRL_STDIO_H */

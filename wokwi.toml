@@ -2,3 +2,4 @@
 version = 1
 firmware = ".pio/build/megaatmega2560/firmware.hex"
 elf = ".pio/build/megaatmega2560/firmware.elf"
+diagram = "test/diagram.json"

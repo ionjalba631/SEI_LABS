@@ -1,0 +1,28 @@
+{
+  "name": "L298N",
+  "author": "Carlos Arino",
+  "pins": [
+    "EN A",
+    "IN1",
+    "IN2",
+    "IN3",
+    "IN4",
+    "EN B",
+    "OUT1",
+    "OUT2",
+    "OUT3",
+    "OUT4",
+    "5V",
+    "GND"
+  ],
+  "controls": [
+    {
+      "id": "Vs",
+      "label": "External Voltage (V)",
+      "type": "range",
+      "min": 0,
+      "max": 32,
+      "step": 1
+    }
+  ]
+}

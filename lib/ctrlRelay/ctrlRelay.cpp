@@ -6,7 +6,7 @@
 
 #include "ddKeypad.h"
 #include "ddLcd.h"
-#include "relayDriver.h"
+#include "relay_dd.h"
 
 namespace {
 
@@ -35,19 +35,19 @@ void print_help() {
 }
 
 void report_state(const char *source) {
-    const bool relay_is_on = relayDriverIsOn();
+    const bool relay_enabled = relay_is_on();
 
     printf(
         "[%s] Bulb is %s\n",
         source,
-        relay_is_on ? "ON" : "OFF"
+        relay_enabled ? "ON" : "OFF"
     );
 
-    show_status_on_lcd(relay_is_on ? "Bec: APRINS" : "Bec: STINS");
+    show_status_on_lcd(relay_enabled ? "Bec: APRINS" : "Bec: STINS");
 }
 
 void execute_relay_command(const bool turn_on, const char *source) {
-    relayDriverSet(turn_on);
+    relay_set(turn_on);
 
     printf(
         "[%s] Command accepted: relay %s -> bulb %s\n",
@@ -180,7 +180,7 @@ void process_keypad_input() {
 }  // namespace
 
 void ctrlRelayInit() {
-    relayDriverInit();
+    relay_init();
     ddLcdInit();
     ddLcdClear();
     ddKeypadInit();
@@ -197,5 +197,5 @@ void ctrlRelayUpdate() {
 }
 
 bool ctrlRelayIsOn() {
-    return relayDriverIsOn();
+    return relay_is_on();
 }

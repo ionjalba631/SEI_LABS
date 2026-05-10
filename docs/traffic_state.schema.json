@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/traffic_state.schema.json",
+  "title": "Traffic Light State Snapshot",
+  "description": "Validation schema for the JSON state frames emitted by the smart traffic light controller.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "phase",
+    "east",
+    "north",
+    "northRequestPending",
+    "phaseElapsedMs",
+    "phaseDurationMs"
+  ],
+  "properties": {
+    "phase": {
+      "type": "string",
+      "enum": [
+        "EAST_GREEN",
+        "EAST_YELLOW",
+        "ALL_RED_TO_NORTH",
+        "NORTH_GREEN",
+        "NORTH_YELLOW",
+        "ALL_RED_TO_EAST"
+      ]
+    },
+    "east": {
+      "type": "string",
+      "enum": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ]
+    },
+    "north": {
+      "type": "string",
+      "enum": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ]
+    },
+    "northRequestPending": {
+      "type": "boolean"
+    },
+    "phaseElapsedMs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "phaseDurationMs": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "phase": {
+            "const": "EAST_GREEN"
+          }
+        },
+        "required": [
+          "phase"
+        ]
+      },
+      "then": {
+        "properties": {
+          "east": {
+            "const": "GREEN"
+          },
+          "north": {
+            "const": "RED"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "phase": {
+            "const": "EAST_YELLOW"
+          }
+        },
+        "required": [
+          "phase"
+        ]
+      },
+      "then": {
+        "properties": {
+          "east": {
+            "const": "YELLOW"
+          },
+          "north": {
+            "const": "RED"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "phase": {
+            "enum": [
+              "ALL_RED_TO_NORTH",
+              "ALL_RED_TO_EAST"
+            ]
+          }
+        },
+        "required": [
+          "phase"
+        ]
+      },
+      "then": {
+        "properties": {
+          "east": {
+            "const": "RED"
+          },
+          "north": {
+            "const": "RED"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "phase": {
+            "const": "NORTH_GREEN"
+          }
+        },
+        "required": [
+          "phase"
+        ]
+      },
+      "then": {
+        "properties": {
+          "east": {
+            "const": "RED"
+          },
+          "north": {
+            "const": "GREEN"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "phase": {
+            "const": "NORTH_YELLOW"
+          }
+        },
+        "required": [
+          "phase"
+        ]
+      },
+      "then": {
+        "properties": {
+          "east": {
+            "const": "RED"
+          },
+          "north": {
+            "const": "YELLOW"
+          }
+        }
+      }
+    }
+  ]
+}

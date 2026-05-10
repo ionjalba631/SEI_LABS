@@ -19,23 +19,98 @@
     },
     {
       "type": "wokwi-pushbutton",
-      "id": "btn1",
+      "id": "northBtn",
       "top": 264,
-      "left": -139,
+      "left": -150,
       "attrs": { "color": "green", "xray": "1" }
     },
     {
       "type": "wokwi-led",
-      "id": "led1",
-      "top": 249.6,
-      "left": 112.2,
+      "id": "eastRed",
+      "top": 208,
+      "left": 100,
       "attrs": { "color": "red" }
     },
     {
       "type": "wokwi-resistor",
-      "id": "r1",
-      "top": 305.45,
-      "left": 155,
+      "id": "rEastRed",
+      "top": 262,
+      "left": 144,
+      "rotate": 180,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "eastYellow",
+      "top": 208,
+      "left": 175,
+      "attrs": { "color": "yellow" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rEastYellow",
+      "top": 262,
+      "left": 219,
+      "rotate": 180,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "eastGreen",
+      "top": 208,
+      "left": 250,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rEastGreen",
+      "top": 262,
+      "left": 294,
+      "rotate": 180,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "northRed",
+      "top": 336,
+      "left": 100,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rNorthRed",
+      "top": 390,
+      "left": 144,
+      "rotate": 180,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "northYellow",
+      "top": 336,
+      "left": 175,
+      "attrs": { "color": "yellow" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rNorthYellow",
+      "top": 390,
+      "left": 219,
+      "rotate": 180,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "northGreen",
+      "top": 336,
+      "left": 250,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rNorthGreen",
+      "top": 390,
+      "left": 294,
       "rotate": 180,
       "attrs": { "value": "220" }
     }
@@ -53,11 +128,26 @@
     [ "lcd1:D5", "mega:31", "blue", [ "h0.1", "v201.8" ] ],
     [ "lcd1:D6", "mega:33", "blue", [ "h0.2", "v211.4" ] ],
     [ "lcd1:D7", "mega:35", "blue", [ "h0.3", "v221" ] ],
-    [ "btn1:1.l", "mega:2", "blue", [ "v0", "h90", "v48" ] ],
-    [ "btn1:2.l", "mega:GND.2", "black", [ "h0", "v67.2", "h196.4" ] ],
-    [ "r1:1", "mega:13", "green", [ "v-28.8", "h-46.8" ] ],
-    [ "r1:2", "led1:A", "green", [ "v0" ] ],
-    [ "led1:C", "mega:GND.2", "green", [ "h-28.8", "v-67.2", "h76.8" ] ]
+    [ "northBtn:1.l", "mega:2", "blue", [ "v0", "h90", "v48" ] ],
+    [ "northBtn:2.l", "mega:GND.2", "black", [ "h0", "v67.2", "h196.4" ] ],
+    [ "rEastRed:1", "mega:13", "green", [ "v-28.8", "h-46.8" ] ],
+    [ "rEastRed:2", "eastRed:A", "green", [ "v0" ] ],
+    [ "eastRed:C", "mega:GND.2", "black", [ "h-28.8", "v-67.2", "h76.8" ] ],
+    [ "rEastYellow:1", "mega:12", "green", [ "v-28.8", "h-121.8" ] ],
+    [ "rEastYellow:2", "eastYellow:A", "green", [ "v0" ] ],
+    [ "eastYellow:C", "mega:GND.2", "black", [ "h-28.8", "v-67.2", "h1.8" ] ],
+    [ "rEastGreen:1", "mega:11", "green", [ "v-28.8", "h-196.8" ] ],
+    [ "rEastGreen:2", "eastGreen:A", "green", [ "v0" ] ],
+    [ "eastGreen:C", "mega:GND.2", "black", [ "h-28.8", "v-67.2", "h-73.2" ] ],
+    [ "rNorthRed:1", "mega:10", "green", [ "v-28.8", "h-46.8" ] ],
+    [ "rNorthRed:2", "northRed:A", "green", [ "v0" ] ],
+    [ "northRed:C", "mega:GND.2", "black", [ "h-28.8", "v-67.2", "h76.8" ] ],
+    [ "rNorthYellow:1", "mega:9", "green", [ "v-28.8", "h-121.8" ] ],
+    [ "rNorthYellow:2", "northYellow:A", "green", [ "v0" ] ],
+    [ "northYellow:C", "mega:GND.2", "black", [ "h-28.8", "v-67.2", "h1.8" ] ],
+    [ "rNorthGreen:1", "mega:8", "green", [ "v-28.8", "h-196.8" ] ],
+    [ "rNorthGreen:2", "northGreen:A", "green", [ "v0" ] ],
+    [ "northGreen:C", "mega:GND.2", "black", [ "h-28.8", "v-67.2", "h-73.2" ] ]
   ],
   "serialMonitor": {
     "display": "terminal",
